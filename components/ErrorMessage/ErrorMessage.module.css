@@ -1,0 +1,29 @@
+.errorWrapper {
+  background-color: #f8d7da;
+  color: #842029;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.errorText {
+  margin: 0;
+  font-weight: 500;
+}
+
+.retryButton {
+  background-color: #842029;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.retryButton:hover {
+  background-color: #6c1b23;
+}
