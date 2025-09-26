@@ -8,7 +8,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
-import Loader from "@/components/Loader/Loader";
+
 import ErrorMessage from "@/components/ErrorMessage/ErrorMessage";
 import { fetchNotes, createNote, deleteNote } from "@/lib/api";
 import type { FetchNotesResponse, CreateNoteDTO } from "@/lib/api";
@@ -78,7 +78,8 @@ export default function NotesClient() {
         </Modal>
       )}
 
-      {isLoading && <Loader />}
+      {isLoading && <p>Loading, please wait...</p>}
+
       {error && (
         <ErrorMessage
           message={error.message}
