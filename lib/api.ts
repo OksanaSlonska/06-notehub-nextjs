@@ -1,5 +1,7 @@
 import axios from "axios";
-import { Note } from "@/types/note";
+import type { Note } from "@/types/note";
+
+export type { Note };
 
 const TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN as string;
 
@@ -9,6 +11,7 @@ export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
+
 export interface CreateNoteDTO {
   title: string;
   content: string;

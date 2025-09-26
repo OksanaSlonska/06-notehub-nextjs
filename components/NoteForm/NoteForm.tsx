@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import type { UseMutationResult } from "@tanstack/react-query";
@@ -22,15 +23,24 @@ const validationSchema = Yup.object({
 });
 
 const NoteForm: React.FC<NoteFormProps> = ({ createMutation, onCancel }) => {
+  const [loading, setLoading] = useState(false);
+  const { mutateAsync } = createMutation;
+
+  const handleSubmit = async (values: CreateNoteDTO, resetForm: () => void) => {
+    try {
+      setLoading(true);
+      await mutateAsync(values);
+      resetForm();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={{ title: "", content: "", tag: "Todo" }}
       validationSchema={validationSchema}
-      onSubmit={(values, { resetForm }) => {
-        createMutation.mutate(values, {
-          onSuccess: () => resetForm(),
-        });
-      }}
+      onSubmit={(values, { resetForm }) => handleSubmit(values, resetForm)}
     >
       {({ isSubmitting }) => (
         <Form className={css.form}>
@@ -79,9 +89,9 @@ const NoteForm: React.FC<NoteFormProps> = ({ createMutation, onCancel }) => {
             <button
               type="submit"
               className={css.submitButton}
-              disabled={isSubmitting || createMutation.isLoading}
+              disabled={isSubmitting || loading}
             >
-              {createMutation.isLoading ? "Creating..." : "Create note"}
+              {loading ? "Creating..." : "Create note"}
             </button>
           </div>
         </Form>
