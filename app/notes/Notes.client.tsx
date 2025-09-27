@@ -1,17 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import NoteList from "@/components/NoteList/NoteList";
 import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
-
 import ErrorMessage from "@/components/ErrorMessage/ErrorMessage";
-import { fetchNotes, createNote, deleteNote } from "@/lib/api";
-import type { FetchNotesResponse, CreateNoteDTO } from "@/lib/api";
+import { fetchNotes } from "@/lib/api";
+import type { FetchNotesResponse } from "@/lib/api";
 import css from "./Notesclient.module.css";
 
 export default function NotesClient() {
@@ -31,21 +30,6 @@ export default function NotesClient() {
 
   const notes = data?.notes || [];
   const totalPages = data?.totalPages || 1;
-
-  const createNoteMutation = useMutation({
-    mutationFn: (note: CreateNoteDTO) => createNote(note),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      setIsModalOpen(false);
-    },
-  });
-
-  const deleteNoteMutation = useMutation({
-    mutationFn: (id: string) => deleteNote(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-    },
-  });
 
   return (
     <div>
@@ -71,10 +55,7 @@ export default function NotesClient() {
 
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
-          <NoteForm
-            createMutation={createNoteMutation}
-            onCancel={() => setIsModalOpen(false)}
-          />
+          <NoteForm onCancel={() => setIsModalOpen(false)} />
         </Modal>
       )}
 
@@ -91,10 +72,7 @@ export default function NotesClient() {
         />
       )}
 
-      <NoteList
-        notes={notes}
-        onDelete={(id: string) => deleteNoteMutation.mutate(id)}
-      />
+      <NoteList notes={notes} />
     </div>
   );
 }

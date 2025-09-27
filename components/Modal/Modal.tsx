@@ -12,8 +12,16 @@ const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = originalOverflow;
+    };
   }, [onClose]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {

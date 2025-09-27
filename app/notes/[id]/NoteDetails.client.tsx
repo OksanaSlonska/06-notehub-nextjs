@@ -17,6 +17,7 @@ const NoteDetailsClient: React.FC<NoteDetailsClientProps> = ({ noteId }) => {
   } = useQuery<Note, Error>({
     queryKey: ["note", noteId],
     queryFn: () => fetchNoteById(noteId),
+    refetchOnMount: false,
   });
 
   if (isLoading) return <p>Loading, please wait...</p>;

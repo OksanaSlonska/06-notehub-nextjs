@@ -52,12 +52,14 @@ export const createNote = async (newNote: CreateNoteDTO): Promise<Note> => {
   return response.data.note;
 };
 
-export const deleteNote = async (id: string): Promise<void> => {
-  await axios.delete<DeleteNoteResponse>(`${BASE_URL}/${id}`, {
+export const deleteNote = async (id: string): Promise<Note> => {
+  const response = await axios.delete<DeleteNoteResponse>(`${BASE_URL}/${id}`, {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
     },
   });
+
+  return response.data.note;
 };
 
 export const fetchNoteById = async (id: string): Promise<Note> => {

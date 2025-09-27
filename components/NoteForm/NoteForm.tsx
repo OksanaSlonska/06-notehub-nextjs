@@ -1,13 +1,14 @@
 "use client";
+
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import type { UseMutationResult } from "@tanstack/react-query";
-import type { Note, CreateNoteDTO } from "@/lib/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createNote } from "@/lib/api";
+import type { CreateNoteDTO, Note } from "@/lib/api";
 import css from "./NoteForm.module.css";
 
 interface NoteFormProps {
-  createMutation: UseMutationResult<Note, Error, CreateNoteDTO, unknown>;
   onCancel: () => void;
 }
 
@@ -22,14 +23,22 @@ const validationSchema = Yup.object({
     .required("Tag is required"),
 });
 
-const NoteForm: React.FC<NoteFormProps> = ({ createMutation, onCancel }) => {
+const NoteForm: React.FC<NoteFormProps> = ({ onCancel }) => {
   const [loading, setLoading] = useState(false);
-  const { mutateAsync } = createMutation;
+  const queryClient = useQueryClient();
+
+  const createNoteMutation = useMutation<Note, Error, CreateNoteDTO>({
+    mutationFn: (newNote) => createNote(newNote),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      onCancel(); // закрываем форму после успеха
+    },
+  });
 
   const handleSubmit = async (values: CreateNoteDTO, resetForm: () => void) => {
     try {
       setLoading(true);
-      await mutateAsync(values);
+      await createNoteMutation.mutateAsync(values);
       resetForm();
     } finally {
       setLoading(false);
